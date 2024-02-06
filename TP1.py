@@ -37,7 +37,7 @@ def plot_perceptron(points, labels, weights):
     plt.title('Perceptron Decision Boundary')
     plt.grid(True)
     plt.show()
-def perceptron_online(points, labels, weights, alpha):
+def perceptron_online(points, labels, weights, alpha, epochs=1000):
     """
     Implement a perceptron using the online update rule.
     
@@ -45,38 +45,28 @@ def perceptron_online(points, labels, weights, alpha):
     :param labels: List of labels corresponding to the points.
     :param weights: Initial weights as a list [w0, w1, w2].
     :param alpha: Learning rate.
+    :param epochs: Maximum number of epochs to run the algorithm.
     :return: Updated weights after running the perceptron algorithm.
     """
-    # Convert points and weights to numpy arrays for vectorized operations
     points = np.array(points)
     labels = np.array(labels)
     weights = np.array(weights)
-    
-    # Add a column of ones to the points to account for the bias (w0)
-    points = np.insert(points, 0, 1, axis=1)
-    while True:
-        delta_w = np.zeros_like(weights)
+    points = np.insert(points, 0, 1, axis=1)  # Add bias term
+
+    for epoch in range(epochs):
         all_correctly_classified = True
-        
-        # for x, t in zip(points, labels):
-        # choisie une paire aléatoire de x et t 
-        for i in range(len(points)):
-            t= labels[i]
-            x= points[i]
-            # Calculate the perceptron output
+        for x, t in zip(points, labels):
             y = 1 if np.dot(weights.T, x) > 0 else 0
-            
-            # If the output is not equal to the desired label, update delta_w
             if y != t:
                 all_correctly_classified = False
-                delta_w = alpha * (t - y) * x
-        
-        # Update weights
-        weights += delta_w
+                # Update weights incrementally after each example
+                weights += alpha * (t - y) * x
         # If all points are correctly classified, break the loop
         if all_correctly_classified:
             break
+
     return weights.tolist()
+
 def perceptron_batch(points, labels, weights, alpha):
     """
     Implement a perceptron using the batch update rule.
