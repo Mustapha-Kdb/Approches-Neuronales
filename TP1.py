@@ -2,7 +2,7 @@ import numpy as np
 import matplotlib.pyplot as plt
 
 # Function to plot the points and the decision boundary
-def plot_perceptron(points, labels, weights):
+def plot_perceptron(points, labels, weights1,weights2):
     """
     Plot the two-dimensional points, their labels, and the perceptron decision boundary.
     
@@ -23,20 +23,28 @@ def plot_perceptron(points, labels, weights):
     plt.scatter(class_1[:, 0], class_1[:, 1], color='blue', label='Class 1')
     
     # Calculate decision boundary (w0 + w1*x + w2*y = 0)
-    # Define two points and plot the line between them (0, -w0/w2) and (-w0/w1, 0)
-    point1 = [0, -weights[0] / weights[2]]
-    point2 = [-weights[0] / weights[1], 0]
-
-    print (point1, point2)
+    # Define two points and plot the line between them (0, -w0/w2) and (-w0/w1, 0) pour la version batch
+    x_values = np.array([points[:, 0].min(), points[:, 0].max()])
+    y_values = -(weights1[0] + weights1[1] * x_values) / weights1[2]
     
-    # Plot the line between the two points
-    plt.plot([point1[0], point2[0]], [point1[1], point2[1]], label='Decision Boundary')
-    plt.xlabel('x1')
-    plt.ylabel('x2')
+    # Define two points and plot the line between them (0, -w0/w2) and (-w0/w1, 0) pour la version online
+    x_values2 = np.array([points[:, 0].min(), points[:, 0].max()])
+    y_values2 = -(weights2[0] + weights2[1] * x_values) / weights2[2]
+
+    
+    
+    
+    # Plot the two lines between the points
+    plt.plot(x_values, y_values, color='black', label='Batch')
+    plt.plot(x_values2, y_values2, color='green', label='Online')
+    # Add labels and title
+    plt.xlabel('X')
+    plt.ylabel('Y')
+    plt.title('Perceptron')
     plt.legend()
-    plt.title('Perceptron Decision Boundary')
     plt.grid(True)
     plt.show()
+
 def perceptron_online(points, labels, weights, alpha, epochs=1000):
     """
     Implement a perceptron using the online update rule.
@@ -66,7 +74,6 @@ def perceptron_online(points, labels, weights, alpha, epochs=1000):
             break
 
     return weights.tolist()
-
 def perceptron_batch(points, labels, weights, alpha):
     """
     Implement a perceptron using the batch update rule.
@@ -111,52 +118,42 @@ def perceptron_batch(points, labels, weights, alpha):
 points_example = [(0, 0), (0, 1), (1, 0), (1, 1)]
 labels_example = [0, 0, 0, 1]
 initial_weights = [0.5, 0.7, 0.3]  # w0, w1, w2
-learning_rate = 0.75
+learning_rate = 0.45
 
 # Run the perceptron function version batch
-final_weights=perceptron_batch(points_example, labels_example, initial_weights, learning_rate)
-print(final_weights)
-plot_perceptron( points_example, labels_example, final_weights)
+final_weights1=perceptron_batch(points_example, labels_example, initial_weights, learning_rate)
+print(final_weights1)
 
 # Run the perceptron function version online
-final_weights=perceptron_online(points_example, labels_example, initial_weights, 0.99)
-print(final_weights)
-plot_perceptron( points_example, labels_example, final_weights)
+final_weights2=perceptron_online(points_example, labels_example, initial_weights,learning_rate)
+print(final_weights2)
+plot_perceptron( points_example, labels_example, final_weights1,final_weights2)
 
 
 # "ou" exemple
 # Define a set of points, labels, initial weights and learning rate
 points_example = [(0, 0), (0, 1), (1, 0), (1, 1)]
 labels_example = [0, 1, 1, 1]
-initial_weights = [0.5, 0.7, 0.3]  # w0, w1, w2
-learning_rate = 0.75
 
 # Run the perceptron function
-final_weights=perceptron_batch(points_example, labels_example, initial_weights, learning_rate)
-print(final_weights)
-plot_perceptron( points_example, labels_example, final_weights)
+final_weights1=perceptron_batch(points_example, labels_example, initial_weights, learning_rate)
+print(final_weights1)
 
 # Run the perceptron function version online
-final_weights=perceptron_online(points_example, labels_example, initial_weights, learning_rate)
-print(final_weights)
-plot_perceptron( points_example, labels_example, final_weights)
+final_weights2=perceptron_online(points_example, labels_example, initial_weights, learning_rate)
+print(final_weights2)
+plot_perceptron( points_example, labels_example, final_weights1,final_weights2)
 
 
 points_cls = [(2, 1), (0, -1), (-2, 1), (0, 2)]
 labels_cls = [1, 1, 0, 0]
-initial_weights = [0.5, -0.7, 0.2]  # w0, w1, w2
-learning_rate = 0.1
 
 # Run the perceptron function version batch
-final_weights=perceptron_batch(points_cls, labels_cls, initial_weights, learning_rate)
-print(final_weights)
-# Use the initial weights for plotting since the weights were not updated
-plot_perceptron(points_cls, labels_cls, final_weights)
+final_weights1=perceptron_batch(points_cls, labels_cls, initial_weights, learning_rate)
+print(final_weights1)
 
 # Run the perceptron function version online
-final_weights=perceptron_online(points_cls, labels_cls, initial_weights, 0.75)
-print(final_weights)
+final_weights2=perceptron_online(points_cls, labels_cls, initial_weights, 0.75)
+print(final_weights2)
 # Use the initial weights for plotting since the weights were not updated
-plot_perceptron(points_cls, labels_cls, final_weights)
-
-
+plot_perceptron( points_cls, labels_cls, final_weights1,final_weights2)
