@@ -13,7 +13,7 @@ def plot_perceptron(points, labels, weights):
     # Convert points and weights to numpy arrays
     points = np.array(points)
     labels = np.array(labels)
-    weights = np.array(perceptron_batch(points_cls, labels_cls, initial_weights, learning_rate))
+    weights = np.array(perceptron_batch(points, labels, weights, learning_rate))
     
     # Extract points classified as 0 and 1
     class_0 = points[labels == 0]
