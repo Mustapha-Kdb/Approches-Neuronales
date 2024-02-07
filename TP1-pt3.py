@@ -47,9 +47,8 @@ def perceptron_batch(points, labels, weights, alpha):
     points = np.array(points)
     labels = np.array(labels)
     weights = np.array(weights)
-
-    points = np.insert(points, 0, 1, axis=1)
     iterations = 0
+    points = np.insert(points, 0, 1, axis=1)
 
     while True:
         delta_w = np.zeros_like(weights)
