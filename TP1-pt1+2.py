@@ -40,7 +40,6 @@ def plot_perceptron(points, labels, weights1,weights2):
     plt.show()
 
 def perceptron_online(points, labels, weights, alpha, epochs=1000):
-
     points = np.array(points)
     labels = np.array(labels)
     weights = np.array(weights)
@@ -48,19 +47,20 @@ def perceptron_online(points, labels, weights, alpha, epochs=1000):
     iterations = 0
     for epoch in range(epochs):
         all_correctly_classified = True
-        for x, t in zip(points, labels):
+        # Mélanger les indices pour obtenir un ordre aléatoire à chaque époque
+        indices = np.arange(len(points))
+        np.random.shuffle(indices)
+        for i in indices:
+            x = points[i]
+            t = labels[i]
             y = 1 if np.dot(weights.T, x) > 0 else 0
             if y != t:
-                all_correctly_classified = False
-                
+                all_correctly_classified = False 
                 weights += alpha * (t - y) * x
                 iterations += 1
-
-        
         if all_correctly_classified:
             break
-
-    return weights.tolist(),iterations
+    return weights.tolist(), iterations
 
 def perceptron_batch(points, labels, weights, alpha):
 
