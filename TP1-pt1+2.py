@@ -54,9 +54,8 @@ def perceptron_online(points, labels, weights, alpha, epochs=1000):
                 all_correctly_classified = False
                 
                 weights += alpha * (t - y) * x
-                iterations += 1
 
-        
+        iterations += 1
         if all_correctly_classified:
             break
 
@@ -96,7 +95,7 @@ def perceptron_batch(points, labels, weights, alpha):
 def generate_ls_data_wide_range(N, dim, weights_teacher):
 
     
-    points = np.random.uniform(-100, 100, (N, dim))
+    points = np.random.uniform(-5000, 5000, (N, dim))
     
     
     points_with_bias = np.insert(points, 0, 1, axis=1)
@@ -106,8 +105,8 @@ def generate_ls_data_wide_range(N, dim, weights_teacher):
     
     return points, labels
 
-N = 250  
-dim = 2  
+N = 150 
+dim = 2
 weights_teacher = np.random.randn(dim + 1)
 
 
@@ -120,7 +119,7 @@ plot_perceptron(points_T, labels_T, weights_teacher,weights_teacher)
 initial_weights_student = np.random.randn(dim + 1)
 
 
-alpha = 0.7
+alpha = 0.2
 
 
 final_weights_batch,ite_batch = perceptron_batch(points_T, labels_T, initial_weights_student, alpha)
