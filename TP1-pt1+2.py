@@ -125,13 +125,13 @@ alpha = 0.7
 
 final_weights_batch,ite_batch = perceptron_batch(points_T, labels_T, initial_weights_student, alpha)
 print("Batch Perceptron Final Weights:", final_weights_batch)
-print(ite_batch)
+print("Nombre d'itération batch: ",ite_batch)
 
 
 final_weights_online, ite_online = perceptron_online(points_T, labels_T, initial_weights_student, alpha)
 print("Online Perceptron Final Weights:", final_weights_online)
 plot_perceptron(points_T, labels_T, final_weights_batch,final_weights_online)
-print(ite_online)
+print("Nombre d'itérations online: ",ite_online)
 
 def calculate_overlap(weights_teacher, weights_student):
     
@@ -154,5 +154,5 @@ def calculate_overlap(weights_teacher, weights_student):
 overlap_batch = calculate_overlap(weights_teacher, final_weights_batch)
 overlap_online = calculate_overlap(weights_teacher, final_weights_online)
 
-print(overlap_batch)
-print(overlap_online)
+print("Rapport Batch: ",overlap_batch)
+print("Rapport online: ",overlap_online)
