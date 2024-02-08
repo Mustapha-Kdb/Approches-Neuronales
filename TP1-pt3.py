@@ -39,7 +39,8 @@ def perceptron_online(points, labels, weights, alpha, epochs=1000):
             if y != t:
                 all_correctly_classified = False 
                 weights += alpha * (t - y) * x
-                iterations += 1
+
+        iterations += 1
         if all_correctly_classified:
             break
     return weights.tolist(), iterations
@@ -143,8 +144,8 @@ def format_results(N_values, P_values, eta_values, results_batch, results_online
 
     
 # Configurations des tests
-N_values = [2, 10, 100, 500, 1000]
-P_values = [10, 100, 500, 1000]
+N_values = [2, 10, 100, 500]
+P_values = [10, 100, 500]
 eta_values = [0.45, 0.45/2, 0.45/10]
 
 results_batch, results_online = run_tests(N_values, P_values, eta_values)
