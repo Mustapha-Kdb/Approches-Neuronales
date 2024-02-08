@@ -106,53 +106,79 @@ def generate_ls_data_wide_range(N, dim, weights_teacher):
     
     return points, labels
 
-N = 1000
-dim = 500
-weights_teacher = np.random.randn(dim + 1)
-
-
-points_T, labels_T = generate_ls_data_wide_range(N, dim, weights_teacher)
-print("visualisation des points LS")
-plot_perceptron(points_T, labels_T, weights_teacher,weights_teacher)
-
-
-
-initial_weights_student = np.random.randn(dim + 1)
-
-
-alpha = 0.7
-
-
-final_weights_batch,ite_batch = perceptron_batch(points_T, labels_T, initial_weights_student, alpha)
-print("Batch Perceptron Final Weights:", final_weights_batch)
-print("Nombre d'itération batch: ",ite_batch)
-
-
-final_weights_online, ite_online = perceptron_online(points_T, labels_T, initial_weights_student, alpha)
-print("Online Perceptron Final Weights:", final_weights_online)
-plot_perceptron(points_T, labels_T, final_weights_batch,final_weights_online)
-print("Nombre d'itérations online: ",ite_online)
-
 def calculate_overlap(weights_teacher, weights_student):
     
     weights_teacher = np.array(weights_teacher)
     weights_student = np.array(weights_student)
     
-    
     dot_product = np.dot(weights_teacher, weights_student)
-    
     
     norm_teacher = np.linalg.norm(weights_teacher)
     norm_student = np.linalg.norm(weights_student)
-    
     
     cosine_angle = dot_product / (norm_teacher * norm_student)
     
     return cosine_angle
 
+def run_tests(dimensions, points, etas, perceptron_function):
+    results = np.zeros((len(dimensions), len(points), len(etas), 2))  # 2 pour <IT> et <R>
+    
+    for i, N in enumerate(dimensions):
+        for j, P in enumerate(points):
+            for k, eta in enumerate(etas):
+                iterations = []
+                overlaps = []
+                for _ in range(50):  # 50 tirages aléatoires
+                    # Générer des données linéairement séparables
+                    weights_teacher = np.random.randn(N + 1)
+                    points_T, labels_T = generate_ls_data_wide_range(P, N, weights_teacher)
+                    initial_weights_student = np.random.randn(N + 1)
 
-overlap_batch = calculate_overlap(weights_teacher, final_weights_batch)
-overlap_online = calculate_overlap(weights_teacher, final_weights_online)
+                    # Entraînement du perceptron
+                    final_weights, it = perceptron_function(points_T, labels_T, initial_weights_student, eta)
+                    overlap = calculate_overlap(weights_teacher, final_weights)
+                    
+                    iterations.append(it)
+                    overlaps.append(overlap)
+                
+                # Calcul de la moyenne pour les itérations et le rapport
+                results[i, j, k, 0] = np.mean(iterations)
+                results[i, j, k, 1] = np.mean(overlaps)
+    
+    return results
 
-print("Rapport Batch: ",overlap_batch)
-print("Rapport online: ",overlap_online)
+# Dimensions et nombres de points à tester
+N_values = [2, 10, 100, 500, 1000, 5000]
+P_values = [10, 100, 500,1000]
+eta_values = [0.7, 0.7/2, 0.7/10]
+
+# Exécuter les tests pour la version batch
+results_batch = run_tests(N_values, P_values, eta_values, perceptron_batch)
+
+# Exécuter les tests pour la version online
+results_online = run_tests(N_values, P_values, eta_values, perceptron_online)
+
+# Fonction pour afficher les résultats sous forme de tableau
+def format_results(N_values, P_values, eta_values, results_batch, results_online):
+    for eta_index, eta in enumerate(eta_values):
+        print(f'eta={eta}')
+        print('+--------+' + '+------------------' * len(P_values) + '+')
+        print('|   N\P   | ' + ' | '.join(f'{P:>16}' for P in P_values) + ' |')
+        print('+--------+' + '+------------------' * len(P_values) + '+')
+        for N_index, N in enumerate(N_values):
+            batch_results = ' | '.join(
+                f'<{results_batch[N_index, j, eta_index, 0]:.2f};{results_batch[N_index, j, eta_index, 1]:.2f}>'
+                for j, P in enumerate(P_values)
+            )
+            online_results = ' | '.join(
+                f'<{results_online[N_index, j, eta_index, 0]:.2f};{results_online[N_index, j, eta_index, 1]:.2f}>'
+                for j, P in enumerate(P_values)
+            )
+            print(f'| {N:<6} | {batch_results} |')
+            print('+--------+' + '+------------------' * len(P_values) + '+')
+            print(f'| {N:<6} | {online_results} |')
+            print('+--------+' + '+------------------' * len(P_values) + '+')
+        print('\n')
+
+
+format_results(N_values, P_values, eta_values, results_batch, results_online)
